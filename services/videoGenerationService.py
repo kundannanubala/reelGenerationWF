@@ -1,31 +1,96 @@
-import requests
+from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
+import os
+from typing import List, Union, Tuple
+import logging
+import re
 
-# Replace 'YOUR_API_KEY' with your actual API key
-API_KEY = ''
-url = ''
+def extract_scene_durations(flashcard: str) -> List[float]:
+    """
+    Extract durations for each scene based on narrator text length.
+    """
+    scenes = []
+    current_narration = ""
+    scene_pattern = r"Scene \d+: "
 
-# Define the request headers
-headers = {
-    'X-API-KEY': API_KEY,
-    'Content-Type': 'application/json'
-}
+    for line in flashcard.split('\n'):
+        if line.startswith("Narrator:"):
+            current_narration = line.replace("Narrator:", "").strip()
+        elif re.match(scene_pattern, line):
+            # Calculate approximate duration based on word count
+            words = len(current_narration.split())
+            duration = max(3, words * 0.5)  # Assume 0.5 seconds per word, minimum 3 seconds
+            scenes.append(duration)
+    
+    return scenes if scenes else [5]  # Default 5 seconds if no scenes found
 
-# Define the request body parameters
-data = {
-    'topic': 'Random AI Story',      # Optional: specify your topic or leave it as the default
-    'voice': 'Charlie',              # Optional: specify the voice or leave it as the default
-    'theme': 'Hormozi_1',            # Optional: specify the theme or leave it as the default
-    'language': 'English',           # Optional: specify the language or leave it as the default
-    'duration': '30-60'              # Optional: specify the duration or leave it as the default
-}
+def create_video_from_images_and_audio(
+    image_paths: List[str],
+    audio_path: str,
+    flashcard: str,
+    output_path: str = "output_video.mp4"
+) -> str:
+    """
+    Creates a video by combining images with audio narration.
+    
+    Args:
+        image_paths: List of paths to the images
+        audio_path: Path to the audio file
+        flashcard: Flashcard text containing scene descriptions and narration
+        output_path: Path where the output video will be saved
+        
+    Returns:
+        str: Path to the output video file or empty string if error occurs
+    """
+    try:
+        # Validate inputs
+        if not image_paths:
+            raise ValueError("No image paths provided")
+        
+        if not os.path.exists(audio_path):
+            raise ValueError(f"Audio file not found: {audio_path}")
+            
+        for img_path in image_paths:
+            if not os.path.exists(img_path):
+                raise ValueError(f"Image file not found: {img_path}")
 
-# Make the POST request to generate the video
-response = requests.post(url, headers=headers, json=data)
+        # Extract durations from flashcard
+        durations = extract_scene_durations(flashcard)
+        
+        # Ensure we have durations for all images
+        if len(durations) < len(image_paths):
+            durations.extend([5] * (len(image_paths) - len(durations)))
 
-# Check if the request was successful
-if response.status_code == 200:
-    response_data = response.json()
-    print(f"Video ID: {response_data['vid']}")
-else:
-    print(f"Failed to generate video. Status code: {response.status_code}")
-    print(response.text)
+        # Load audio file
+        audio_clip = AudioFileClip(audio_path)
+        
+        # Create video clips from images
+        video_clips = []
+        for img_path, duration in zip(image_paths, durations):
+            clip = ImageClip(img_path).set_duration(duration)
+            video_clips.append(clip)
+        
+        # Rest of the function remains the same
+        final_clip = concatenate_videoclips(video_clips)
+        final_clip = final_clip.set_audio(audio_clip)
+        
+        if final_clip.duration > audio_clip.duration:
+            final_clip = final_clip.set_duration(audio_clip.duration)
+        
+        os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
+        
+        final_clip.write_videofile(
+            output_path,
+            fps=24,
+            codec='libx264',
+            audio_codec='aac',
+            remove_temp=True
+        )
+        
+        final_clip.close()
+        audio_clip.close()
+        
+        return output_path
+        
+    except Exception as e:
+        logging.error(f"Error creating video: {str(e)}")
+        return ""

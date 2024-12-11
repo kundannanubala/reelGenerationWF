@@ -20,3 +20,5 @@ langchain_google_community
 
 pydantic-settings
 
+moviepy==2.0.0.dev2
+

@@ -15,6 +15,7 @@ def story_prompt_template():
 def flashcard_prompt_template():
     return """
     You are a flashcard generator. You are given a {story} and you need to break it down into a flashcard.
+    The Scene should have description enough to generate an image. 
     Example output Format:
     Narrator:The story is about a man who is walking in the park.
     Scene 1: The man is walking in the park.
