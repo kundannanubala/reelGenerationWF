@@ -1,8 +1,8 @@
 import requests
 
 # Replace 'YOUR_API_KEY' with your actual API key
-API_KEY = 'HLNrEYTONq2RYm683vxyqXpZxuRP0E3QAHPBw7Woxbo'
-url = 'https://viralapi.vadoo.tv/api/generate_video'
+API_KEY = ''
+url = ''
 
 # Define the request headers
 headers = {
