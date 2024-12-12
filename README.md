@@ -4,7 +4,7 @@ A comprehensive application that generates children's stories and converts them 
 
 ## 🎥 Demo
 
-![Demo Video](Screen%20Recording%202024-12-12%20at%2017.49.11.mp4)
+![Demo Video](story.mp4)
 
 Watch the [Demo Video](#) to see the application in action!
 
