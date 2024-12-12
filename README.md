@@ -4,9 +4,9 @@ A comprehensive application that generates children's stories and converts them 
 
 ## 🎥 Demo
 
-![Demo Video](https://drive.google.com/file/d/1SuyQ6qn78Hq6QDXKaMvxtumpcXszlk4A/view?usp=drive_link)
+https://drive.google.com/file/d/1SuyQ6qn78Hq6QDXKaMvxtumpcXszlk4A/preview
 
-Watch the [Demo Video](#) to see the application in action!
+Watch the demo video above to see the application in action!
 
 ## 🌟 Features
 
@@ -44,7 +44,7 @@ Watch the [Demo Video](#) to see the application in action!
 
 1. **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone [<repository-url>](https://github.com/kundannanubala/reelGenerationWF.git)
     ```
 
 2. **Create and activate a virtual environment:**
@@ -116,6 +116,3 @@ The application generates:
 ## 📞 Support
 
 For any inquiries or support, please contact us at [kundannaubala@gmail.com](mailto:kundannaubala@gmail.com).
-
-```
-
