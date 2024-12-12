@@ -1,10 +1,10 @@
-# ![AI-Powered Children's Story Generator](https://via.placeholder.com/1200x300?text=AI-Powered+Children's+Story+Generator+Banner)
+# ![AI-Powered Children's Story Generator](Screenshot%202024-12-12%20at%2017.46.14.png)
 
 A comprehensive application that generates children's stories and converts them into multimedia content using various AI services from Google Cloud Platform.
 
 ## 🎥 Demo
 
-![Demo Video](https://via.placeholder.com/800x450?text=Demo+Video+Placeholder)
+![Demo Video](Screen%20Recording%202024-12-12%20at%2017.49.11.mp4)
 
 Watch the [Demo Video](#) to see the application in action!
 
