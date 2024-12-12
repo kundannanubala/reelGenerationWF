@@ -2,7 +2,4 @@ venv
 credentials.json
 .env
 texttospeechCredentials.json
-generated_blog_images/
-generated_audio/
-generated_videos/
 __pycache__/
