@@ -17,9 +17,15 @@ story = generate_story(context)
 print(story)
 flashcard = flashcard_generator(story)
 print(flashcard)
-text_to_speech(story)
 
-extract_and_generate_scenes(flashcard,story)
+# Generate audio
+audio_path = text_to_speech(story)
+if not audio_path:
+    print("Failed to generate audio. Stopping process.")
+    exit()
+
+# Continue with image generation and video creation
+scenes = extract_and_generate_scenes(flashcard, story)
 
 # Get all PNG images from the generated_blog_images folder
 image_paths = sorted(glob.glob("generated_blog_images/*.png"))

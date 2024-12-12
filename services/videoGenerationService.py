@@ -27,7 +27,7 @@ def create_video_from_images_and_audio(
     image_paths: List[str],
     audio_path: str,
     flashcard: str,
-    output_path: str = "output_video.mp4"
+    output_path: str = "generated_videos/output_video.mp4"
 ) -> str:
     """
     Creates a video by combining images with audio narration.
@@ -44,24 +44,27 @@ def create_video_from_images_and_audio(
     try:
         # Validate inputs
         if not image_paths:
-            raise ValueError("No image paths provided")
+            logging.error("No image paths provided")
+            return ""
         
         if not os.path.exists(audio_path):
-            raise ValueError(f"Audio file not found: {audio_path}")
+            logging.error(f"Audio file not found: {audio_path}")
+            return ""
             
         for img_path in image_paths:
             if not os.path.exists(img_path):
-                raise ValueError(f"Image file not found: {img_path}")
+                logging.error(f"Image file not found: {img_path}")
+                return ""
 
+        # Load audio file
+        audio_clip = AudioFileClip(audio_path)
+        
         # Extract durations from flashcard
         durations = extract_scene_durations(flashcard)
         
         # Ensure we have durations for all images
         if len(durations) < len(image_paths):
             durations.extend([5] * (len(image_paths) - len(durations)))
-
-        # Load audio file
-        audio_clip = AudioFileClip(audio_path)
         
         # Create video clips from images
         video_clips = []
@@ -69,15 +72,18 @@ def create_video_from_images_and_audio(
             clip = ImageClip(img_path).set_duration(duration)
             video_clips.append(clip)
         
-        # Rest of the function remains the same
+        # Concatenate clips and set audio
         final_clip = concatenate_videoclips(video_clips)
         final_clip = final_clip.set_audio(audio_clip)
         
+        # Adjust duration if needed
         if final_clip.duration > audio_clip.duration:
             final_clip = final_clip.set_duration(audio_clip.duration)
         
-        os.makedirs(os.path.dirname(output_path) or '.', exist_ok=True)
+        # Ensure output directory exists
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
+        # Write video file
         final_clip.write_videofile(
             output_path,
             fps=24,
@@ -86,10 +92,11 @@ def create_video_from_images_and_audio(
             remove_temp=True
         )
         
+        # Clean up
         final_clip.close()
         audio_clip.close()
         
-        return output_path
+        return output_path if os.path.exists(output_path) else ""
         
     except Exception as e:
         logging.error(f"Error creating video: {str(e)}")

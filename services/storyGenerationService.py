@@ -30,15 +30,8 @@ def generate_story(context):
 
     prompt = ChatPromptTemplate.from_template(story_prompt_template())
     try:
-        context = {"context": lambda x: context}
-        chain = (
-            context
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-
-        return chain.invoke(prompt)
+        chain = prompt | llm | StrOutputParser()
+        return chain.invoke({"context": context})
     
     except Exception as e:
         return f"An error occurred: {str(e)}"
@@ -50,16 +43,8 @@ def flashcard_generator(story):
 
     prompt = ChatPromptTemplate.from_template(flashcard_prompt_template())
     try:
-        context = {"story": lambda x: story}
-        chain = (
-            context
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-
-        return chain.invoke(prompt)
+        chain = prompt | llm | StrOutputParser()
+        return chain.invoke({"story": story})
     
     except Exception as e:
         return f"An error occurred: {str(e)}"
-    
