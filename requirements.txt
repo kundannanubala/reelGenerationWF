@@ -22,3 +22,6 @@ pydantic-settings
 
 moviepy==2.0.0.dev2
 
+google-cloud-vision
+
+streamlit
