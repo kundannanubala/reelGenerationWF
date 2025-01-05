@@ -30,15 +30,8 @@ def generate_story(context):
 
     prompt = ChatPromptTemplate.from_template(story_prompt_template())
     try:
-        context = {"context": lambda x: context}
-        chain = (
-            context
-            | prompt
-            | llm
-            | StrOutputParser()
-        )
-
-        return chain.invoke(prompt)
+        chain = prompt | llm | StrOutputParser()
+        return chain.invoke({"context": context})
     
     except Exception as e:
         return f"An error occurred: {str(e)}"
