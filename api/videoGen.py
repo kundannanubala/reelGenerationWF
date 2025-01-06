@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
-from services.videoGenerationService import create_video_from_images_and_audio
+from services.videoGenService import create_video_from_images_and_audio
 from typing import List
 from models.videoGenModel import VideoGenerationRequest
 router = APIRouter()

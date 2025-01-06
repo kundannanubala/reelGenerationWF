@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from services.textToSpeechService import text_to_speech
+from services.speechGenService import text_to_speech
 
 router = APIRouter()
 

@@ -1,9 +1,11 @@
 from langchain_google_community import TextToSpeechTool
 import shutil
-
+import os
+from core.config import settings
 
 def text_to_speech(text_block):
-
+    
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = settings.GOOGLE_APPLICATION_CREDENTIALS
     llm = TextToSpeechTool()
     llm.name
 

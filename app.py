@@ -1,7 +1,7 @@
-from services.storyGenerationService import generate_story, flashcard_generator
-from services.textToSpeechService import text_to_speech
-from services.textToImageService import extract_and_generate_scenes
-from services.videoGenerationService import create_video_from_images_and_audio
+from services.storyGenService import generate_story, flashcard_generator
+from services.speechGenService import text_to_speech
+from services.imageGenService import extract_and_generate_scenes
+from services.videoGenService import create_video_from_images_and_audio
 import os
 from google.cloud import aiplatform
 from core.config import settings

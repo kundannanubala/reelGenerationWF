@@ -1,6 +1,6 @@
 from moviepy.editor import ImageClip, AudioFileClip, concatenate_videoclips
 import os
-from typing import List, Union, Tuple
+from typing import List
 import logging
 import re
 

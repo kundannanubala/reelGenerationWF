@@ -68,8 +68,35 @@ async function generateAudio() {
 async function generateImages() {
     try {
         showLoading(true);
-        const response = await fetch(`${apiUrl}/imageGen/generateImage?text=${encodeURIComponent(generatedFlashcard)}`);
-        
+
+        // Define the request payload
+        const requestBody = {
+            flashcard: generatedFlashcard,
+            story: generatedStory
+        };
+
+        // Make the fetch call
+        const response = await fetch(`${apiUrl}/imageGen/generateImage`, {  // Correct endpoint
+            method: 'GET',  
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)  // Send the request body
+        });
+
+        // Handle the response
+        const data = await response.json();
+        if (data.scenes) {
+            generatedImagePaths = data.scenes;
+            const mediaOutput = document.getElementById("mediaOutput");
+            data.scenes.forEach(([scene, imagePath]) => {
+                const img = document.createElement("img");
+                img.src = imagePath;
+                img.alt = scene;
+                mediaOutput.appendChild(img);
+            });
+        }
+
         // Enable video generation button
         document.getElementById("generateVideoBtn").disabled = false;
     } catch (error) {

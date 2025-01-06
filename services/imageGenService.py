@@ -43,12 +43,12 @@ def generate_image_vertexai(scene: str, story: str) -> str:
 
         if images:
             # Create output directory if it doesn't exist
-            output_folder = "generated_blog_images"
+            output_folder = "GeneratedImages"
             os.makedirs(output_folder, exist_ok=True)
 
             # Generate unique filename using timestamp
             timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            output_file = os.path.join(output_folder, f"blog_image_{timestamp}.png")
+            output_file = os.path.join(output_folder, f"image_{timestamp}.png")
 
             # Save the image locally
             images[0].save(location=output_file, include_generation_parameters=False)

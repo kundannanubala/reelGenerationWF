@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from services.storyGenerationService import generate_story, flashcard_generator
+from services.storyGenService import generate_story, flashcard_generator
 
 router = APIRouter()
 
