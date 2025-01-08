@@ -94,3 +94,20 @@ def delete_generated_images():
         for file in os.listdir(folder_path):
             os.remove(os.path.join(folder_path, file))
 
+def list_generated_images():
+    try:
+        folder_path = "media/GeneratedImages"
+        if not os.path.exists(folder_path):
+            return []
+            
+        # Get all image files from the folder
+        images = [f"GeneratedImages/{f}" for f in os.listdir(folder_path) 
+                 if f.endswith(('.png', '.jpg', '.jpeg'))]
+        
+        # Sort by creation time (newest first)
+        images.sort(key=lambda x: os.path.getctime(os.path.join("media", x)), reverse=True)
+        
+        return images
+    except Exception as e:
+        print(f"Error listing images: {str(e)}")
+        return []

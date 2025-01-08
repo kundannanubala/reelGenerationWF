@@ -20,4 +20,12 @@ def deleteGeneratedImages():
     delete_generated_images()
     return {"message": "Generated images deleted successfully"}
 
-
+@router.get("/listImages")
+def list_images():
+    try:
+        # Get the list of images from the service
+        images = list_generated_images()
+        return {"images": images}  # Return the images in a dictionary
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    

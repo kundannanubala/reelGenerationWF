@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Story Generator</title>
+    <title>Image Generation</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -16,11 +16,6 @@
             flex-direction: column;
             gap: 20px;
         }
-        textarea {
-            width: 100%;
-            height: 100px;
-            margin-bottom: 10px;
-        }
         button {
             padding: 10px 20px;
             background-color: #007bff;
@@ -32,12 +27,6 @@
         button:disabled {
             background-color: #cccccc;
         }
-        .output-section {
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-top: 10px;
-            border-radius: 5px;
-        }
         #loading {
             display: none;
             color: #007bff;
@@ -48,6 +37,10 @@
             gap: 20px;
             padding: 20px;
             width: 100%;
+        }
+        .media-container img {
+            max-width: 300px;
+            height: auto;
         }
         .scene-container {
             display: flex;
@@ -77,45 +70,11 @@
 </head>
 <body>
     <div class="container">
-        <h1>AI Story Generator</h1>
+        <h1>Image Generation</h1>
         
-        <!-- Loading Indicator -->
-        <div id="loading">Loading...</div>
-        
-        <!-- Section 1: Story Generation -->
+        <!-- Image Generation Section -->
         <div class="section">
-            <h2>Section 1: Story Generation</h2>
-            <div class="subsection">
-                <h3>1.1 Generate Story</h3>
-                <textarea id="context" placeholder="Enter the context for your story..."></textarea>
-                <button id="generateStoryBtn">Generate Story</button>
-                <div class="output-section">
-                    <h4>Generated Story</h4>
-                    <div id="story"></div>
-                    <button id="clearStoryBtn" class="clear-btn" disabled>Clear Story</button>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3>1.2 Generate Flashcard</h3>
-                <button id="generateFlashcardBtn" disabled>Generate Flashcard</button>
-                <div class="output-section">
-                    <h4>Generated Flashcard</h4>
-                    <div id="flashcard"></div>
-                    <button id="clearFlashcardBtn" class="clear-btn" disabled>Clear Flashcard</button>
-                </div>
-            </div>
-
-            <div class="subsection">
-                <h3>1.3 & 1.4 Save/Delete Story & Flashcard</h3>
-                <button id="saveStoryFlashcardBtn" disabled>Save Story & Flashcard</button>
-                <button id="deleteStoryFlashcardBtn" disabled>Delete Story & Flashcard</button>
-            </div>
-        </div>
-
-        <!-- Section 2: Image Generation -->
-        <div class="section">
-            <h2>Section 2: Image Generation</h2>
+            <h2>Image Generation</h2>
             <div class="subsection">
                 <h3>Generate & Display Images</h3>
                 <button id="generateImagesBtn" disabled>Generate Images</button>
@@ -129,6 +88,6 @@
             </div>
         </div>
     </div>
-    <script src="/static/index.js"></script>
+    <script src="/static/images.js"></script>
 </body>
 </html>

@@ -2,6 +2,7 @@ const apiUrl = "http://localhost:8000";
 let generatedStory = "";
 let generatedFlashcard = "";
 let generatedImagePaths = [];
+let isStorySaved = false;
 
 async function generateStory() {
     const context = document.getElementById("context").value;
@@ -17,9 +18,9 @@ async function generateStory() {
         document.getElementById("story").innerText = data.story;
         generatedStory = data.story;
         
-        // Enable other buttons
         document.getElementById("generateFlashcardBtn").disabled = false;
-        document.getElementById("generateAudioBtn").disabled = false;
+        document.getElementById("clearStoryBtn").disabled = false;
+        updateSaveButtonState();
     } catch (error) {
         console.error("Error generating story:", error);
         alert("Error generating story");
@@ -36,11 +37,69 @@ async function generateFlashcard() {
         document.getElementById("flashcard").innerText = data.flashcard;
         generatedFlashcard = data.flashcard;
         
-        // Enable image generation button
-        document.getElementById("generateImagesBtn").disabled = false;
+        document.getElementById("clearFlashcardBtn").disabled = false;
+        updateSaveButtonState();
     } catch (error) {
         console.error("Error generating flashcard:", error);
         alert("Error generating flashcard");
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function saveStoryFlashcard() {
+    try {
+        showLoading(true);
+        const response = await fetch(`${apiUrl}/storyGen/saveStoryFlashcard?story=${encodeURIComponent(generatedStory)}&flashcard=${encodeURIComponent(generatedFlashcard)}`);
+        const data = await response.json();
+        alert(data.message);
+        isStorySaved = true;
+        
+        document.getElementById("deleteStoryFlashcardBtn").disabled = false;
+        document.getElementById("generateImagesBtn").disabled = false;
+    } catch (error) {
+        console.error("Error saving story and flashcard:", error);
+        alert("Error saving story and flashcard");
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteStoryFlashcard() {
+    try {
+        showLoading(true);
+        const response = await fetch(`${apiUrl}/storyGen/deleteStoryFlashcard`);
+        const data = await response.json();
+        alert(data.message);
+        isStorySaved = false;
+        
+        clearStory();
+        clearFlashcard();
+        
+        document.getElementById("deleteStoryFlashcardBtn").disabled = true;
+        document.getElementById("generateImagesBtn").disabled = true;
+        document.getElementById("deleteImagesBtn").disabled = true;
+    } catch (error) {
+        console.error("Error deleting story and flashcard:", error);
+        alert("Error deleting story and flashcard");
+    } finally {
+        showLoading(false);
+    }
+}
+
+async function deleteGeneratedImages() {
+    try {
+        showLoading(true);
+        const response = await fetch(`${apiUrl}/imageGen/deleteGeneratedImages`);
+        const data = await response.json();
+        alert(data.message);
+        
+        // Clear the media output
+        document.getElementById("mediaOutput").innerHTML = '';
+        document.getElementById("deleteImagesBtn").disabled = true;
+    } catch (error) {
+        console.error("Error deleting images:", error);
+        alert("Error deleting images");
     } finally {
         showLoading(false);
     }
@@ -68,28 +127,14 @@ async function generateAudio() {
 async function generateImages() {
     try {
         showLoading(true);
-        const requestBody = {
-            flashcard: generatedFlashcard,
-            story: generatedStory
-        };
-
         const response = await fetch(`${apiUrl}/imageGen/generateImage?flashcard=${encodeURIComponent(generatedFlashcard)}&story=${encodeURIComponent(generatedStory)}`);
         const data = await response.json();
         
-        if (data.scenes) {
-            // Store only the image paths
-            generatedImagePaths = data.scenes.map(([_, imagePath]) => imagePath);
-            
-            const mediaOutput = document.getElementById("mediaOutput");
-            data.scenes.forEach(([scene, imagePath]) => {
-                const img = document.createElement("img");
-                img.src = imagePath;
-                img.alt = scene;
-                mediaOutput.appendChild(img);
-            });
-        }
-
+        // After successful generation, display the images
+        await displayGeneratedImages();
+        
         document.getElementById("generateVideoBtn").disabled = false;
+        document.getElementById("deleteImagesBtn").disabled = false;
     } catch (error) {
         console.error("Error generating images:", error);
         alert("Error generating images");
@@ -140,9 +185,81 @@ function showLoading(show) {
     document.getElementById("loading").style.display = show ? "block" : "none";
 }
 
-// Event Listeners
-document.getElementById("generateStoryBtn").addEventListener("click", generateStory);
-document.getElementById("generateFlashcardBtn").addEventListener("click", generateFlashcard);
-document.getElementById("generateAudioBtn").addEventListener("click", generateAudio);
-document.getElementById("generateImagesBtn").addEventListener("click", generateImages);
-document.getElementById("generateVideoBtn").addEventListener("click", generateVideo);
+function clearStory() {
+    generatedStory = "";
+    document.getElementById("story").innerText = "";
+    document.getElementById("clearStoryBtn").disabled = true;
+    document.getElementById("generateFlashcardBtn").disabled = true;
+    updateSaveButtonState();
+}
+
+function clearFlashcard() {
+    generatedFlashcard = "";
+    document.getElementById("flashcard").innerText = "";
+    document.getElementById("clearFlashcardBtn").disabled = true;
+    updateSaveButtonState();
+}
+
+function updateSaveButtonState() {
+    const saveButton = document.getElementById("saveStoryFlashcardBtn");
+    saveButton.disabled = !(generatedStory && generatedFlashcard);
+}
+
+// Function to display images from the media folder
+async function displayGeneratedImages() {
+    try {
+        const mediaOutput = document.getElementById("mediaOutput");
+        mediaOutput.innerHTML = ''; // Clear existing content
+        
+        // Fetch the list of images from the backend
+        const response = await fetch(`${apiUrl}/imageGen/listImages`);
+        const data = await response.json();
+        
+        if (data.images && data.images.length > 0) {
+            data.images.forEach((imagePath) => {
+                // Create container for each image
+                const imageContainer = document.createElement("div");
+                imageContainer.className = "scene-container";
+                
+                // Add image using the media path instead of static
+                const img = document.createElement("img");
+                img.src = `/media/${imagePath}`; // Using media path for generated images
+                img.alt = "Generated Scene";
+                imageContainer.appendChild(img);
+                
+                mediaOutput.appendChild(imageContainer);
+            });
+            
+            // Enable delete button if images are displayed
+            document.getElementById("deleteImagesBtn").disabled = false;
+        }
+    } catch (error) {
+        console.error("Error displaying images:", error);
+    }
+}
+
+// Move all event listeners inside a DOMContentLoaded event
+document.addEventListener('DOMContentLoaded', function() {
+    // Story Generation
+    document.getElementById("generateStoryBtn").addEventListener("click", generateStory);
+    document.getElementById("clearStoryBtn").addEventListener("click", clearStory);
+    
+    // Flashcard Generation
+    document.getElementById("generateFlashcardBtn").addEventListener("click", generateFlashcard);
+    document.getElementById("clearFlashcardBtn").addEventListener("click", clearFlashcard);
+    
+    // Story & Flashcard Management
+    document.getElementById("saveStoryFlashcardBtn").addEventListener("click", saveStoryFlashcard);
+    document.getElementById("deleteStoryFlashcardBtn").addEventListener("click", deleteStoryFlashcard);
+    
+    // Image Generation
+    document.getElementById("generateImagesBtn").addEventListener("click", generateImages);
+    document.getElementById("deleteImagesBtn").addEventListener("click", deleteGeneratedImages);
+    
+    // Audio & Video Generation
+    document.getElementById("generateAudioBtn")?.addEventListener("click", generateAudio);
+    document.getElementById("generateVideoBtn")?.addEventListener("click", generateVideo);
+    
+    // Display any existing images when the page loads
+    displayGeneratedImages();
+});
