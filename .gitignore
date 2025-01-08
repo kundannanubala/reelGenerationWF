@@ -2,7 +2,5 @@ venv
 credentials.json
 .env
 texttospeechCredentials.json
-GeneratedImages
-audio.mp3
 __pycache__
-output_video.mp4
+media

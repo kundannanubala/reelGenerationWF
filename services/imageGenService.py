@@ -43,7 +43,7 @@ def generate_image_vertexai(scene: str, story: str) -> str:
 
         if images:
             # Create output directory if it doesn't exist
-            output_folder = "GeneratedImages"
+            output_folder = "media/GeneratedImages"
             os.makedirs(output_folder, exist_ok=True)
 
             # Generate unique filename using timestamp
@@ -87,4 +87,10 @@ def extract_and_generate_scenes(flashcard: str, story: str) -> List[Tuple[str, s
             print(f"Failed to generate image for Scene {index}")
     
     return generated_images
+
+def delete_generated_images():
+    folder_path = "media/GeneratedImages"
+    if os.path.exists(folder_path):
+        for file in os.listdir(folder_path):
+            os.remove(os.path.join(folder_path, file))
 

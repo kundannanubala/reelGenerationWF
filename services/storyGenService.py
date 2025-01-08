@@ -1,9 +1,10 @@
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.prompts import ChatPromptTemplate
 import os
-from google.cloud import aiplatform
 from langchain.schema.output_parser import StrOutputParser
 from core.config import settings
+import os
+from datetime import datetime
 
 
 def story_prompt_template():
@@ -56,3 +57,22 @@ def flashcard_generator(story):
     except Exception as e:
         return f"An error occurred: {str(e)}"
     
+def save_story_flashcard(story, flashcard):
+    # Create output directory if it doesn't exist   
+    output_folder = "media"
+    os.makedirs(output_folder, exist_ok=True)
+
+    # Generate unique filename using timestamp
+    
+    output_file = os.path.join(output_folder, f"story&flashcard.txt")
+
+    with open(output_file, "w") as f:
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        f.write("timeStamp:"f"{timestamp}")
+        f.write("\n\n=== STORY ===\n\n")
+        f.write(story)
+        f.write("\n\n=== FLASHCARD ===\n\n")
+        f.write(flashcard)
+
+def delete_story_flashcard():
+    os.remove("media/story&flashcard.txt")

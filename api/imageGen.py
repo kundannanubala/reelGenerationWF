@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
-from models.imageGenModel import ImageGenerationRequest, ImageGenerationResponse
-from services.imageGenService import extract_and_generate_scenes
+from models.imageGenModel import ImageGenerationResponse
+from services.imageGenService import *
 
 router = APIRouter()
 
@@ -14,3 +14,10 @@ async def generate_scenes(flashcard: str, story: str):
         return ImageGenerationResponse(scenes=generated_scenes)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/deleteGeneratedImages")
+def deleteGeneratedImages():
+    delete_generated_images()
+    return {"message": "Generated images deleted successfully"}
+
+

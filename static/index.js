@@ -68,26 +68,18 @@ async function generateAudio() {
 async function generateImages() {
     try {
         showLoading(true);
-
-        // Define the request payload
         const requestBody = {
             flashcard: generatedFlashcard,
             story: generatedStory
         };
 
-        // Make the fetch call
-        const response = await fetch(`${apiUrl}/imageGen/generateImage`, {  // Correct endpoint
-            method: 'GET',  
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)  // Send the request body
-        });
-
-        // Handle the response
+        const response = await fetch(`${apiUrl}/imageGen/generateImage?flashcard=${encodeURIComponent(generatedFlashcard)}&story=${encodeURIComponent(generatedStory)}`);
         const data = await response.json();
+        
         if (data.scenes) {
-            generatedImagePaths = data.scenes;
+            // Store only the image paths
+            generatedImagePaths = data.scenes.map(([_, imagePath]) => imagePath);
+            
             const mediaOutput = document.getElementById("mediaOutput");
             data.scenes.forEach(([scene, imagePath]) => {
                 const img = document.createElement("img");
@@ -97,7 +89,6 @@ async function generateImages() {
             });
         }
 
-        // Enable video generation button
         document.getElementById("generateVideoBtn").disabled = false;
     } catch (error) {
         console.error("Error generating images:", error);
@@ -110,6 +101,11 @@ async function generateImages() {
 async function generateVideo() {
     try {
         showLoading(true);
+        
+        if (!generatedImagePaths || generatedImagePaths.length === 0) {
+            throw new Error("No images generated yet");
+        }
+
         const videoRequest = {
             image_paths: generatedImagePaths,
             audio_path: "audio.mp3",
@@ -126,10 +122,15 @@ async function generateVideo() {
         });
         
         const data = await response.json();
-        alert("Video generated successfully!");
+        
+        if (data.message) {
+            alert(data.message);
+        } else {
+            alert("Video generated successfully!");
+        }
     } catch (error) {
         console.error("Error generating video:", error);
-        alert("Error generating video");
+        alert("Error generating video: " + error.message);
     } finally {
         showLoading(false);
     }
