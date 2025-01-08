@@ -3,6 +3,11 @@ from fastapi import FastAPI
 from api import storyGen, audioGen, imageGen, videoGen
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from core.config import settings
+import os
+
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = settings.GOOGLE_APPLICATION_CREDENTIALS
 
 app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
