@@ -4,3 +4,4 @@ credentials.json
 texttospeechCredentials.json
 __pycache__
 media
+temp
